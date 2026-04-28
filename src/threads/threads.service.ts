@@ -1,26 +1,82 @@
-import { Injectable } from '@nestjs/common';
-import { CreateThreadDto } from './dto/create-thread.dto';
-import { UpdateThreadDto } from './dto/update-thread.dto';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateThreadDto } from 'src/threads/dto/create-thread.dto';
+import { UpdateThreadDto } from 'src/threads/dto/update-thread.dto';
 
 @Injectable()
 export class ThreadsService {
-  create(createThreadDto: CreateThreadDto) {
-    return 'This action adds a new thread';
+  constructor(private prisma: PrismaService) {}
+
+  async create(userId: string, dto: CreateThreadDto) {
+    return this.prisma.threads.create({
+      data: {
+        title: dto.title,
+        content: dto.content,
+        userId: userId,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all threads`;
+  async findAll() {
+    return this.prisma.threads.findMany({
+      include: {
+        user: {
+          select: { username: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} thread`;
+  async findByUserId(userId: string) {
+    return this.prisma.threads.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
-  update(id: number, updateThreadDto: UpdateThreadDto) {
-    return `This action updates a #${id} thread`;
+  async findOne(id: string) {
+    const thread = await this.prisma.threads.findUnique({
+      where: { id },
+      include: { user: { select: { username: true } } },
+    });
+
+    if (!thread) {
+      throw new NotFoundException(`Thread with ID ${id} not found`);
+    }
+
+    return thread;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} thread`;
+  async update(id: string, userId: string, dto: UpdateThreadDto) {
+    const thread = await this.findOne(id);
+
+    if (thread.userId !== userId) {
+      throw new ForbiddenException(
+        'You do not have permission to update this thread',
+      );
+    }
+
+    return this.prisma.threads.update({
+      where: { id },
+      data: { content: dto.content },
+    });
+  }
+
+  async remove(id: string, userId: string) {
+    const thread = await this.findOne(id);
+
+    if (thread.userId !== userId) {
+      throw new ForbiddenException(
+        'You do not have permission to delete this thread',
+      );
+    }
+
+    await this.prisma.threads.delete({ where: { id } });
+    return { message: 'Thread deleted successfully' };
   }
 }

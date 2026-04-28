@@ -5,6 +5,8 @@ import { UserService } from 'src/user/user.service';
 import { LocalAuthGuard } from 'src/_common/guards/local-auth.guard';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/generated/prisma/client';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { LoginDto } from 'src/auth/dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -14,12 +16,22 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiResponse({ status: 201, description: 'User successfully registered.' })
+  @ApiResponse({
+    status: 409,
+    description: 'Email or username already exists.',
+  })
   async register(@Body() body: CreateUserDto) {
     return await this.usersService.create(body);
   }
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @ApiOperation({ summary: 'Login with email and password' })
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ status: 201, description: 'Returns a JWT access token.' })
+  @ApiResponse({ status: 401, description: 'Invalid credentials.' })
   login(@Request() req: ExpressRequest & { user: Omit<User, 'passwordHash'> }) {
     return this.authService.login(req.user);
   }
