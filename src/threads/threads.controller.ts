@@ -16,17 +16,28 @@ import { CreateThreadDto } from 'src/threads/dto/create-thread.dto';
 import { UpdateThreadDto } from 'src/threads/dto/update-thread.dto';
 import {
   ApiBearerAuth,
+  ApiExtraModels,
   ApiOperation,
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
+import {
+  ThreadCreateResponseDto,
+  ThreadResponseDto,
+} from 'src/threads/dto/thread-response.dto';
+import {
+  MessageResponseDto,
+  SuccessResponseDto,
+} from 'src/_common/dtos/generic-response.dto';
+import { ApiSuccessResponse } from 'src/_common/decorators/api-success-response.decorator';
 
+@ApiExtraModels(SuccessResponseDto, ThreadResponseDto, ThreadCreateResponseDto)
 @Controller('threads')
 export class ThreadsController {
   constructor(private readonly threadsService: ThreadsService) {}
 
   @ApiOperation({ summary: 'List all threads from all users' })
-  @ApiResponse({ status: 200, description: 'Return all threads.' })
+  @ApiSuccessResponse(ThreadResponseDto, { isArray: true })
   @Get()
   findAll() {
     return this.threadsService.findAll();
@@ -37,7 +48,7 @@ export class ThreadsController {
   @ApiOperation({
     summary: 'List threads belonging to the currently logged-in user',
   })
-  @ApiResponse({ status: 200, description: 'Return user threads.' })
+  @ApiSuccessResponse(ThreadResponseDto, { isArray: true })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @UseGuards(JwtAuthGuard)
   @Get('my-threads')
@@ -47,7 +58,7 @@ export class ThreadsController {
 
   @ApiOperation({ summary: 'View details of a specific thread by its ID' })
   @ApiParam({ name: 'id', description: 'The UUID of the thread' })
-  @ApiResponse({ status: 200, description: 'Return thread details.' })
+  @ApiSuccessResponse(ThreadResponseDto)
   @ApiResponse({ status: 404, description: 'Thread not found.' })
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -57,10 +68,7 @@ export class ThreadsController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create a new thread' })
-  @ApiResponse({
-    status: 201,
-    description: 'The thread has been successfully created.',
-  })
+  @ApiSuccessResponse(ThreadResponseDto)
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Post()
   create(
@@ -74,10 +82,7 @@ export class ThreadsController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update the content of a thread' })
   @ApiParam({ name: 'id', description: 'The UUID of the thread' })
-  @ApiResponse({
-    status: 200,
-    description: 'The thread has been successfully updated.',
-  })
+  @ApiSuccessResponse(ThreadResponseDto)
   @ApiResponse({
     status: 403,
     description: 'Forbidden: You do not own this thread.',
@@ -97,10 +102,7 @@ export class ThreadsController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Delete a thread' })
   @ApiParam({ name: 'id', description: 'The UUID of the thread' })
-  @ApiResponse({
-    status: 200,
-    description: 'The thread has been successfully deleted.',
-  })
+  @ApiSuccessResponse(MessageResponseDto)
   @ApiResponse({
     status: 403,
     description: 'Forbidden: You do not own this thread.',

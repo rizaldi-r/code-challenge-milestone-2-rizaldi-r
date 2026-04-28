@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from 'src/_common/filters/exceptions.filter';
+import { TransformInterceptor } from 'src/_common/interceptors/transformer.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +16,10 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  app.useGlobalInterceptors(new TransformInterceptor());
+
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   const config = new DocumentBuilder()
     .setTitle('Threads API Documentation')

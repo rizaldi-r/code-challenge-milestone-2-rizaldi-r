@@ -36,6 +36,7 @@ export class ThreadsService {
     return this.prisma.threads.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
+      include: { user: { select: { username: true } } },
     });
   }
 
@@ -64,6 +65,7 @@ export class ThreadsService {
     return this.prisma.threads.update({
       where: { id },
       data: { content: dto.content },
+      include: { user: { select: { username: true } } },
     });
   }
 

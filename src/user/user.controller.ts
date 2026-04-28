@@ -11,7 +11,9 @@ import {
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
+import { ApiSuccessResponse } from 'src/_common/decorators/api-success-response.decorator';
 import { JwtAuthGuard } from 'src/_common/guards/jwt-auth.guard';
+import { UserResponseDto } from 'src/user/dto/user-response.dto';
 import { UserService } from 'src/user/user.service';
 
 @Controller('users')
@@ -23,10 +25,7 @@ export class UserController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a full user profile by ID' })
   @ApiParam({ name: 'id', description: 'Numeric ID of the user' })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns user data without password hash.',
-  })
+  @ApiSuccessResponse(UserResponseDto)
   @ApiResponse({ status: 404, description: 'User not found.' })
   async getUserById(@Param('id', ParseUUIDPipe) id: string) {
     return await this.usersService.findById(id);
