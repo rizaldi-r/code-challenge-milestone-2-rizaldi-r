@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(uuid())
   username     String   @unique
   email        String   @unique
   passwordHash String
@@ -25,8 +25,8 @@ model User {
 }
 
 model Threads {
-  id        Int      @id @default(autoincrement())
-  userId    Int
+  id        String   @id @default(uuid())
+  userId    String
   title     String
   content   String
   createdAt DateTime @default(now())
