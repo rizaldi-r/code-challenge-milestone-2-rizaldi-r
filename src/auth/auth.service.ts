@@ -11,7 +11,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  // Used by the LocalStrategy to verify credentials
+  // used by the LocalStrategy to verify credentials
   async validateUser(
     email: string,
     password: string,
@@ -28,6 +28,7 @@ export class AuthService {
     const payload = { email: user.email, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
+      user,
     };
   }
 }

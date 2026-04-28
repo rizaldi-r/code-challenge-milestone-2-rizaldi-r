@@ -10,6 +10,7 @@ import { LoginDto } from 'src/auth/dto/login.dto';
 import { LoginResponseDto } from 'src/auth/dto/auth-response.dto';
 import { UserResponseDto } from 'src/user/dto/user-response.dto';
 import { ApiSuccessResponse } from 'src/_common/decorators/api-success-response.decorator';
+import {plainToInstance} from 'class-transformer';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +27,8 @@ export class AuthController {
     description: 'Email or username already exists.',
   })
   async register(@Body() body: CreateUserDto) {
-    return await this.usersService.create(body);
+    const user = await this.usersService.create(body);
+    return plainToInstance(UserResponseDto, user);
   }
 
   @UseGuards(LocalAuthGuard)

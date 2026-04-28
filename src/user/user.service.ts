@@ -32,8 +32,7 @@ export class UserService {
       },
     });
 
-    const { passwordHash, ...result } = newUser;
-    return result;
+    return newUser;
   }
 
   async findByEmail(email: string) {
@@ -51,7 +50,6 @@ export class UserService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    const { passwordHash, ...result } = user;
-    return result;
+    return user;
   }
 }

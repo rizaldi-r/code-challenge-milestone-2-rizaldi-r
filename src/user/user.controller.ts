@@ -11,6 +11,7 @@ import {
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
+import { plainToInstance } from 'class-transformer';
 import { ApiSuccessResponse } from 'src/_common/decorators/api-success-response.decorator';
 import { JwtAuthGuard } from 'src/_common/guards/jwt-auth.guard';
 import { UserResponseDto } from 'src/user/dto/user-response.dto';
@@ -28,6 +29,7 @@ export class UserController {
   @ApiSuccessResponse(UserResponseDto)
   @ApiResponse({ status: 404, description: 'User not found.' })
   async getUserById(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.usersService.findById(id);
+    const user = await this.usersService.findById(id);
+    return plainToInstance(UserResponseDto, user);
   }
 }
