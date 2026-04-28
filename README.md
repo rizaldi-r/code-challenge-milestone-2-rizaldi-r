@@ -1,3 +1,15 @@
+
+http://localhost:3001/api/docs
+
+![alt text](<assets/screenshots/Screenshot 2026-04-28 183818.png>)
+![alt text](<assets/screenshots/Screenshot 2026-04-28 183831.png>)
+![alt text](<assets/screenshots/Screenshot 2026-04-28 183849.png>)
+![alt text](<assets/screenshots/Screenshot 2026-04-28 183908.png>)
+![alt text](<assets/screenshots/Screenshot 2026-04-28 183917.png>)
+![alt text](<assets/screenshots/Screenshot 2026-04-28 183932.png>)
+![alt text](<assets/screenshots/Screenshot 2026-04-28 183944.png>)
+![alt text](<assets/screenshots/Screenshot 2026-04-28 183953.png>)
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
